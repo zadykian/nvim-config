@@ -21,8 +21,9 @@ use over SSH (Termius on iPad + Magic Keyboard).
 
 ## Key bindings (leader = Space)
 
-- `<Space>sf` find files, `<Space>sg` live grep, `<Space><Space>` open buffers (Telescope)
-- `gd` go to definition, `grr` references, `K` hover docs, `<Space>rn` rename, `<Space>ca` code action
+- `<Space>sf` find files, `<Space>sg` live grep, `<Space><Space>` open buffers, `<Space>sd` diagnostics (Telescope)
+- `grd` go to definition, `grr` references, `gri` implementation, `grt` type def, `K` hover docs
+- `grn` rename, `gra` code action, `[d`/`]d` prev/next diagnostic, `<Space>q` diagnostics list
 - `<Space>gg` lazygit, `<Space>gf` lazygit history for current file
 - `<F5>` start/continue debug, `<Space>b` toggle breakpoint, `<F1/F2/F3>` step into/over/out, `<F7>` debug UI
 - `:Dotnet` for easy-dotnet commands (build / run / test / secrets / new …)
