@@ -122,7 +122,17 @@ do
   --  Schedule the setting after `UiEnter` because it can increase startup-time.
   --  Remove this option if you want your OS clipboard to remain independent.
   --  See `:help 'clipboard'`
-  vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+  vim.schedule(function()
+    vim.o.clipboard = 'unnamedplus'
+    -- Over SSH (e.g. Termius on an iPad) there is no local clipboard tool, so use the
+    -- terminal's OSC 52 escape sequence to sync yanks with the client's system clipboard.
+    local osc52 = require 'vim.ui.clipboard.osc52'
+    vim.g.clipboard = {
+      name = 'OSC 52',
+      copy = { ['+'] = osc52.copy '+', ['*'] = osc52.copy '*' },
+      paste = { ['+'] = osc52.paste '+', ['*'] = osc52.paste '*' },
+    }
+  end)
 
   -- Enable break indent
   vim.o.breakindent = true
@@ -184,6 +194,10 @@ do
   -- Clear highlights on search when pressing <Esc> in normal mode
   --  See `:help hlsearch`
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+  -- Exit insert mode with `jk` -- handy on keyboards without a dedicated Esc key,
+  -- e.g. the iPad Magic Keyboard. (You can also remap Caps Lock -> Esc in Termius.)
+  vim.keymap.set('i', 'jk', '<Esc>', { desc = 'Exit insert mode' })
 
   -- Diagnostic Config & Keymaps
   --  See `:help vim.diagnostic.Opts`
@@ -903,8 +917,8 @@ do
   -- NOTE: You can also specify a branch or a specific commit
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
-  -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  -- Ensure basic parsers are installed (c_sharp/json/xml added for .NET: .cs, .csproj, appsettings)
+  local parsers = { 'bash', 'c', 'c_sharp', 'diff', 'html', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'xml' }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -966,7 +980,7 @@ do
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.debug'
   -- require 'kickstart.plugins.indent_line'
   -- require 'kickstart.plugins.lint'
   -- require 'kickstart.plugins.autopairs'
@@ -976,7 +990,7 @@ do
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- require 'custom.plugins'
+  require 'custom.plugins'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
