@@ -13,3 +13,6 @@ spell/
 # nvim-pack-lock.json
 
 .DS_Store
+
+# Claude Code session data (plans, etc.) — kept locally, not tracked
+.claude/
